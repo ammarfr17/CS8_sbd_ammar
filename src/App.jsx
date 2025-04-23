@@ -1,17 +1,48 @@
 // CGV Landing Page (React + TailwindCSS)
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-scroll';
+import { motion } from 'framer-motion';
+import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 export default function CGVLandingPage() {
+  const [showTopButton, setShowTopButton] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowTopButton(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800">
       {/* Navbar */}
       <nav className="bg-red-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
         <h1 className="text-2xl font-bold">CGV Cinemas</h1>
         <ul className="hidden md:flex gap-6 text-base">
-          <li><a href="#about" className="hover:text-gray-200">About Us</a></li>
-          <li><a href="#services" className="hover:text-gray-200">Services</a></li>
-          <li><a href="#promo" className="hover:text-gray-200">Promo</a></li>
-          <li><a href="#contact" className="hover:text-gray-200">Contact</a></li>
+          <li><Link to="about" smooth={true} duration={500} className="hover:text-gray-200 cursor-pointer">About Us</Link></li>
+          <li><Link to="services" smooth={true} duration={500} className="hover:text-gray-200 cursor-pointer">Services</Link></li>
+          <li><Link to="promo" smooth={true} duration={500} className="hover:text-gray-200 cursor-pointer">Promo</Link></li>
+          <li><Link to="contact" smooth={true} duration={500} className="hover:text-gray-200 cursor-pointer">Contact</Link></li>
         </ul>
       </nav>
 
@@ -25,8 +56,15 @@ export default function CGVLandingPage() {
 
       {/* About */}
       <section id="about" className="py-12 px-6 md:px-20">
-        <h3 className="text-3xl font-semibold mb-4">About us</h3>
-        <p className="text-lg leading-relaxed">CGV Cinemas adalah jaringan bioskop global yang hadir di Indonesia dengan konsep sinema kelas dunia. Kami menawarkan pengalaman menonton terbaik dengan teknologi terkini seperti 4DX, ScreenX, dan SweetBox.</p>
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-3xl font-semibold mb-4">About us</h3>
+          <p className="text-lg leading-relaxed">CGV Cinemas adalah jaringan bioskop global yang hadir di Indonesia dengan konsep sinema kelas dunia. Kami menawarkan pengalaman menonton terbaik dengan teknologi terkini seperti 4DX, ScreenX, dan SweetBox.</p>
+        </motion.div>
       </section>
 
       {/* Services */}
@@ -68,7 +106,27 @@ export default function CGVLandingPage() {
       {/* Footer */}
       <footer className="bg-red-600 text-white text-center py-4">
         <p>&copy; 2025 CGV Cinemas Indonesia. All rights reserved.</p>
+        <div className="flex justify-center gap-4 mt-2">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
+            <FaFacebook size={24} />
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
+            <FaTwitter size={24} />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-200">
+            <FaInstagram size={24} />
+          </a>
+        </div>
       </footer>
+
+      {showTopButton && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 bg-red-600 text-white p-3 rounded-full shadow-lg hover:bg-red-700"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }
